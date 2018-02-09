@@ -17,4 +17,5 @@ Four files included in this folder are:
 ReadMe.txt: basic overview of the assignment
 Codebook.md: reference to code chunks to help follow steps from reading and consolidating data, to calculating the mean and re-organizing the dataset
 run_analysis.R: supporting R code for the submission
+tidyData.txt: the text output file with data summarized by subject and activity class
 
