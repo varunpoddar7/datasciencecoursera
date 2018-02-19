@@ -10,8 +10,9 @@ shinyServer(function(input, output) {
     
     
     mwState <- reactive({
-        setDT(midwest)
-        midwest[state==input$state & poptotal > input$countyPop*1000, .(state, county, area, poptotal, percwhite, percblack, percamerindan, percasian, percother)]
+        
+        midWestCopy <- data.table(midwest) 
+        midWestCopy[state==input$state & poptotal > input$countyPop*1000, .(state, county, area, poptotal, percwhite, percblack, percamerindan, percasian, percother)]
     })
     
     
