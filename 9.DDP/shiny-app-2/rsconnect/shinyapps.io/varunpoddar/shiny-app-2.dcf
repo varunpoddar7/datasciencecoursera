@@ -1,0 +1,12 @@
+name: shiny-app-2
+title: shiny-app-2
+username:
+account: varunpoddar
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 285063
+bundleId: 1230221
+url: https://varunpoddar.shinyapps.io/shiny-app-2/
+when: 1519060745.28034
+asMultiple: FALSE
+asStatic: FALSE

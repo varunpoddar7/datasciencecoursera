@@ -6,3 +6,5 @@ The goal of this application is to provide an interface to access the Motor Tren
 The output on the right panel will confirm your selected criteria, display a table of cars that meet your criteria and graphically show other aspects that can guide your purchase decision. Collectively, the data shows you your choices of cars with their weight, mpg, gears and carburetors. 
 
 Supporting presentation: http://rpubs.com/varunpoddar/ddp-car-buying-choice
+
+Github Source Code Link: https://github.com/varunpoddar7/datasciencecoursera/tree/master/9.DDP/shiny-app-2

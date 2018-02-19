@@ -32,7 +32,7 @@ shinyUI(navbarPage("Car for the Par",
                     # Show data and graphs
                     mainPanel(
                         h4("Documentation / Instructions:"),
-                        p("From the", em(" left "),"panel, please set preferences for (a) cylinders, (b) horsepower and (c) transmission type"),
+                        p("From the", em(" left "),"panel, please set preferences for (a) cylinders, (b) horsepower and (c) transmission type. Please see the", em(" About "), "tab from the navigation bar for source code and presentation links."),
                         br(),
                         h4("Selection:"),
                         textOutput("selectedVar"),
