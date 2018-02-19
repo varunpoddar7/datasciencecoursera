@@ -8,10 +8,11 @@ shinyServer(function(input, output) {
         paste("You have chosen to view data for counties with population greater than", input$countyPop, ",000 in ", input$state)
     })    
     
+    midWestCopy <- read.csv(file=file.path(getwd(), "mwDataSubset.csv"), header=TRUE, sep=",", stringsAsFactors=FALSE)
+    setDT(midWestCopy)
     
     mwState <- reactive({
-        
-        midWestCopy <- data.table(midwest) 
+        #midWestCopy <- data.table(midwest) 
         midWestCopy[state==input$state & poptotal > input$countyPop*1000, .(state, county, area, poptotal, percwhite, percblack, percamerindan, percasian, percother)]
     })
     

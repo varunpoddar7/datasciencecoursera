@@ -1,0 +1,12 @@
+name: ddp-shiny-midwestDemographics
+title: ddp-shiny-midwestDemographics
+username:
+account: varunpoddar
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 284065
+bundleId: 1229371
+url: https://varunpoddar.shinyapps.io/ddp-shiny-midwestDemographics/
+when: 1519014085.60426
+asMultiple: FALSE
+asStatic: FALSE
