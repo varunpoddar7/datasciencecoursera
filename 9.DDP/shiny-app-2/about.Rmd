@@ -4,3 +4,5 @@
 The goal of this application is to provide an interface to access the Motor Trends data to help individuals narrow down their choice of cars based on preferences such as number of cylinders, hp, and transmission type. Please set preferences using the filters on the left panel. 
 
 The output on the right panel will confirm your selected criteria, display a table of cars that meet your criteria and graphically show other aspects that can guide your purchase decision. Collectively, the data shows you your choices of cars with their weight, mpg, gears and carburetors. 
+
+Supporting presentation: http://rpubs.com/varunpoddar/ddp-car-buying-choice
