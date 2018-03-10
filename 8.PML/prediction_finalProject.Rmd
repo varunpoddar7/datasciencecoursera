@@ -1,0 +1,120 @@
+---
+title: "Prediction Model - Fitness"
+author: "Varun Poddar"
+date: "3/4/2018"
+output: html_document
+---
+
+## Background
+This weight lifting dataset contains data from four sensors, one each from the arm, forearm, belt and dumbell of 6 participants ("carlitos", "pedro", "adelmo", "charles", "eurico", "jeremy") tracking their bicep curl movement. Their exercise is classified into 1 of 5 classes: A - correctly executed, B - threw elbows to front, C - lifted dumbell halfway, D - lowered dumbell halfway, E - threw hips to front. Goal of this analysis is to build a prediction model using various algorithms and techniques to predict the activity class for 20 test observations. 
+
+## Approach
+Load the data set, transform various columns, clean dataset, setup cross-validation within the training dataset as sample size is large enough, create two different prediction models, and predict class outcome for the 20 test cases using the more accurate model. 
+
+To get started, download and load data. 
+```{r setup, message=FALSE, warning=FALSE}
+pkgs <- c("data.table", "ggplot2", "caret", "rpart", "randomForest")
+lapply(pkgs, require, character.only=TRUE)
+rm(pkgs)
+
+trURL <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+tsURL <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+
+
+if(!file.exists("pml-training.csv")) {
+    download.file(url=trURL, destfile="pml-training.csv", method="curl")
+}
+rm(trURL)
+
+if(!file.exists("pml-testing.csv")) {
+    download.file(url=tsURL, destfile="pml-testing.csv", method="curl")
+}
+rm(tsURL)
+
+
+trainDataOrig <- read.csv("pml-training.csv", sep=",", header=TRUE, na.strings=c("", "NA"))
+testDataOrig <- read.csv("pml-testing.csv", sep=",", header=TRUE, na.strings=c("", "NA"))
+
+```
+
+## Data Transformation & Cross-Validation Setup
+Split the training dataset into a sub-training and sub-test set for model validation before applying the selected prediction model to provided test data set. Chose to split training data into 80% training and 20% test data. 
+
+To transform / clean up data, first applied Near-Zero-Variance adjustment to remove columns that didn't exhibit variance. Secondly, removed columns that had mostly NA values and irrelevant information such as row-ids and various time-stamps.
+
+```{r data-transformation}
+set.seed(32323)
+
+#split training data set of 19622 records into 80% training and 20% "test" set, essentially setting up the original testData to act as a validation set
+inTrain <- createDataPartition(y=trainDataOrig$classe, p=0.80, list=FALSE)
+modelTrainData <- trainDataOrig[inTrain, ]
+modelTestData <- trainDataOrig[-inTrain, ]
+
+#remove variables with near zero variance as their impact to the model is minimal
+nzvDrop <- nearZeroVar(x=modelTrainData, saveMetrics = TRUE)
+modelTrainData <- modelTrainData[ , !nzvDrop$nzv]
+modelTestData <- modelTestData[ , !nzvDrop$nzv]
+
+#remove columns that contain NA values in over 15000 records out of the 15699 records
+naCols <- which(colSums(is.na(modelTrainData))>15000)
+modelTrainData <- modelTrainData[ , -naCols]
+modelTestData <- modelTestData[ , -naCols]
+modelTrainData <- modelTrainData[ , -c(1:6)]
+modelTestData <- modelTestData[ , -c(1:6)]
+
+#apply same transformation to provided test data
+testDataOrig <- testDataOrig[ , !nzvDrop$nzv]
+testDataOrig <- testDataOrig[ , -naCols]
+testDataOrig <- testDataOrig[ , -c(1:6)]
+
+```
+
+
+## Model Selection & Overview
+For model selection, first applied a standard decision tree classification model on the 80% training data set. Then, applied a random forest prediction model, which resulted in much higher accuracy, as expected. Tested both models on the remaining 20% test dataset.
+
+```{r modeling}
+set.seed(32323)
+
+#model-1
+model1 <- train(classe ~ ., data=modelTrainData, method="rpart")
+print(model1$finalModel)
+predict1 <- predict(model1, newdata=modelTestData)
+confusionMatrix(modelTestData$classe , predict1)
+plot(model1$finalModel, uniform=TRUE, main="Classification Tree")
+text(model1$finalModel, use.n=TRUE, all=TRUE, cex=.33)
+
+#model-2
+model2 <- randomForest(classe ~. , data=modelTrainData)
+predict2 <- predict(model2, newdata=modelTestData)
+confusionMatrix(modelTestData$classe, predict2)
+
+```
+
+
+## Results & Sampling Error Analysis
+Off the two models, the decision tree model has an accuracy of 49.53%, with an estimated out-of-sample error rate of 50.47%. The random forest prediction model has an accuracy rate of 99.62% with an estimated out-of-sample error rate of only 0.38%. As the error chart below shows, using more than approx. 50 trees does not reduce error that significantly. 
+
+The 15-most important variables validated the importance of movement on the belt, dumbbell and forearm. As one might expect with a bicep curl, errors originating at the arm are less likely. Intuitively it makes sense that jerkiness or deviation in motion is more likely to occur at the belt or dumbbell, thereby making data from those two sensors more variable and more likely to predict one of the 4 error classes.   
+
+```{r error-plots}
+
+#showing the error as it relates to the number of trees
+plot(model2, main="Model error by number of trees")
+
+#showing the 15 most important variables
+varImpPlot(model2, n.var = 15, main="15-most Important Variables")
+
+```
+
+
+
+Given the higher accuracy of the random forest model, it was selected and applied to the final test dataset. 
+
+```{r final-output}
+predictF <- predict(model2, newdata=testDataOrig)
+predictF
+
+```
+
+
